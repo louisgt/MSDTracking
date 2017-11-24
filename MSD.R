@@ -1,7 +1,7 @@
 arg = commandArgs(trailingOnly=TRUE)
 
-#### PARSE CURRENT SIMULATION DIRECTORY
 n_frames = as.numeric(arg[1])
+prefix = arg[2]
 
 #### LOAD UTILITIES (INSTALL IF MISSING)
 if (!require("pacman")) install.packages("pacman",repos = "http://cran.us.r-project.org")
@@ -9,11 +9,15 @@ pacman::p_load(ggplot2, reshape2)
 
 print("Importing MSD data...")
 
-#### IMPORT TIME SERIES DATA
-msd = as.data.frame(read.csv("melt_output.txt",sep="\t"))
+#### IMPORT MELTED DF
+msd = as.data.frame(read.csv(paste(prefix,"_melt.txt",sep=""),sep="\t"))
 
+## Order by frame
 msd = msd[order(msd$FRAME),]
+
+## Reconstruct dataframe
 unmelt = dcast(msd,TRACK~FRAME)
+
 frame_loss = 401 - rowSums(is.na(unmelt[,2:ncol(unmelt)]))
 n_per_frame = rowSums(sapply(X=frame_loss,y=seq(1,400), FUN=function(x,y) x > y))
 time_avg = colMeans(unmelt[,-1],na.rm = TRUE)

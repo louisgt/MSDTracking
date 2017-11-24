@@ -1,10 +1,12 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 
 import sys
-print sys.argv[1:]
+import re
 
 planes = int(sys.argv[2])
 n_tracks = int(sys.argv[3])
+prefix = sys.argv[4].replace(' ','')
+
 #x coordinates vector
 x_coord = [[] for i in range(n_tracks)]
 #y coordinates vector
@@ -32,7 +34,8 @@ for i in range(n_tracks):
 		sum=sum/(len(x_coord[i])-j)
 		dr_sq[i].append(sum)
 
-with open('melt_output.txt', 'w') as o:
+filename = prefix + "_melt.txt"
+with open(filename, 'w') as o:
 	o.write("TRACK" + "\t" + "FRAME" + "\t" + "VALUE" + "\n")
 	# i = track
 	for i in range(n_tracks):
