@@ -26,7 +26,7 @@ track_length = [0 for i in range(n_tracks)]
 for i in range(n_tracks):
 	track_length[i] = len(x_coord[i])
 
-### Ensemble-averaged MSD - Parry definition
+### Ensemble-averaged MSD
 
 # find length of longest trajectory
 # max_time
