@@ -9,4 +9,4 @@ To use, simply run
 ```
 MSD.sh your_tracking_file.txt your_output_prefix
 ```
-All the files will be created in your current directory.
+All the files/plots will be created in your current directory.
