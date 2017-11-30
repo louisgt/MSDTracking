@@ -7,6 +7,6 @@ cp MSD.R MSD.py MSD.sh /usr/local/bin/
 
 To use, simply run 
 ```
-MSD.sh your_tracking_file.txt the_output_prefix
+MSD.sh your_tracking_file.txt your_output_prefix
 ```
 All the files will be created in your current directory.
