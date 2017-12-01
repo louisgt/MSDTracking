@@ -1,7 +1,6 @@
 arg = commandArgs(trailingOnly=TRUE)
 
-n_frames = as.numeric(arg[1])
-prefix = arg[2]
+prefix = arg[1]
 
 #### LOAD UTILITIES (INSTALL IF MISSING)
 if (!require("pacman")) install.packages("pacman",repos = "http://cran.us.r-project.org")
@@ -14,6 +13,8 @@ print("Importing MSD data...")
 msd = as.data.frame(read.csv(paste(prefix,"_MSD.txt",sep=""),sep="\t"))
 msd_tau = as.data.frame(read.csv(paste(prefix,"_MSD_tau.txt",sep=""),sep="\t"))
 
+n_frames = nrow(msd)
+
 ## Order by frame
 msd_tau = msd_tau[order(msd_tau$FRAME),]
 msd_single = msd_tau
@@ -21,8 +22,9 @@ msd_single = msd_tau
 ## Reconstruct dataframe
 unmelt = dcast(msd_tau,TRACK~FRAME)
 
-frame_loss = 401 - rowSums(is.na(unmelt[,2:ncol(unmelt)]))
-n_per_frame = rowSums(sapply(X=frame_loss,y=seq(1,401), FUN=function(x,y) x > y))
+# frame_loss = 401 - rowSums(is.na(unmelt[,2:ncol(unmelt)]))
+# n_per_frame = rowSums(sapply(X=frame_loss,y=seq(1,401), FUN=function(x,y) x > y))
+
 msd_tau = colMeans(unmelt[,-1],na.rm = TRUE)
 time_sd = apply(unmelt[,2:ncol(unmelt)], 2, function(x) sd(x, na.rm=TRUE))
 tau=seq(from=0,to=(n_frames*2.048)-1,by=2.048)
@@ -45,9 +47,9 @@ c = ggplot(MELT_tau, aes(x=tau,y=msd_tau)) + geom_line() + theme_bw(base_size = 
 c$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
 ggsave(paste(prefix,"_MSD_time-ensemble_average.png",sep=""), plot=c, width = 11, height = 8.5, dpi=300)
 
-d = ggplot(MELT_tau, aes(x=tau)) + geom_line(aes(y=msd_tau, colour="blue")) + theme_bw(base_size = 16) + scale_color_discrete(guide=FALSE) + labs(x="Time (s)",y="MSD tau") + ggtitle(paste("Time-ensemble average MSD vs Number of tracks per frame - ",prefix,sep="")) + geom_line(aes(y = n_per_frame/25, colour = "red")) + scale_y_continuous(sec.axis = sec_axis(~., name = "Number of contributing trajectories (x25)"))
-d$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
-ggsave(paste(prefix,"_MSD_time-ensemble_average_nb_tracks.png",sep=""), plot=d, width = 11, height = 8.5, dpi=300)
+# d = ggplot(MELT_tau, aes(x=tau)) + geom_line(aes(y=msd_tau, colour="blue")) + theme_bw(base_size = 16) + scale_color_discrete(guide=FALSE) + labs(x="Time (s)",y="MSD tau") + ggtitle(paste("Time-ensemble average MSD vs Number of tracks per frame - ",prefix,sep="")) + geom_line(aes(y = n_per_frame/25, colour = "red")) + scale_y_continuous(sec.axis = sec_axis(~., name = "Number of contributing trajectories (x25)"))
+# d$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
+# ggsave(paste(prefix,"_MSD_time-ensemble_average_nb_tracks.png",sep=""), plot=d, width = 11, height = 8.5, dpi=300)
 
 e = ggplot(msd) + geom_line(aes(x=TAU,y=MSD)) + theme_bw(base_size=16) + labs(x="Time (s)",y="MSD") + ggtitle(paste("Ensemble average MSD vs Number of tracks per frame - ",prefix,sep=""))
 e$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")

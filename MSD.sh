@@ -11,7 +11,7 @@ awk 'NR > 3' $1 | awk '{print $1,$3,$4}' > tracking_noHeader.txt
 
 /usr/local/bin/MSD.py tracking_noHeader.txt ${PLANES} ${N_TRACKS} $2
 
-Rscript MSD.R $PLANES $2
+Rscript /usr/local/bin/MSD.R $2
 
 rm tracking_noHeader.txt
 

@@ -26,6 +26,8 @@ track_length = [0 for i in range(n_tracks)]
 for i in range(n_tracks):
 	track_length[i] = len(x_coord[i])
 
+max_frame = max(track_length)
+
 ### Ensemble-averaged MSD
 
 # find length of longest trajectory
@@ -38,8 +40,8 @@ for i in range(n_tracks):
 #		sum+= (xi(tau) - xi(0))^2
 #	MSD[tau] = sum/n
 
-MSD = [0 for i in range(planes)]
-for tau in range(planes):
+MSD = [0 for i in range(max_frame)]
+for tau in range(max_frame):
 	nb=0
 	sum=0
 	for track in range(n_tracks):
@@ -52,7 +54,7 @@ for tau in range(planes):
 filename = prefix + "_MSD.txt"
 with open(filename, 'w') as o:
 	o.write("TAU" + "\t" + "MSD" + "\n")
-	for tau in range(planes):
+	for tau in range(max_frame):
 		o.write(str(tau) + "\t" + str(MSD[tau]) + "\n")
 
 # i indexes the current track
