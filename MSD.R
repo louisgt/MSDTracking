@@ -25,8 +25,9 @@ msd_single = msd_tau
 unmelt = dcast(msd_tau,TRACK~FRAME)
 
 msd_tau = colMeans(unmelt[,-1],na.rm = TRUE)
-MELT_tau = cbind(msd_single$TAU,msd_tau)
+MELT_tau = cbind(unique(msd_single$FRAME),msd_tau)
 MELT_tau = as.data.frame(MELT_tau)
+colnames(MELT_tau)[1]="TAU"
 
 both_MSD = cbind(msd_tau,msd)
 both_MSD = melt(both_MSD,id="TAU")
