@@ -8,15 +8,15 @@ echo "Number of frames: ${PLANES}"
 echo "Number of tracks: ${N_TRACKS}"
 echo "Frame interval: $3"
 
-awk 'NR > 2' $1 | awk '{print $1,$3,$4,$7}' > tracking_noHeader.txt
+[ ! -z "$4" ] && echo "Bead tracking file: $4"
 
-Rscript /usr/local/bin/binData.R
+awk 'NR > 2' $1 | awk '{print $1,$3,$4,$7}' > ${2}_tracking_noHeader.txt
 
-/usr/local/bin/MSD.py tracking_noHeader.txt ${PLANES} ${N_TRACKS} $2
+Rscript /usr/local/bin/binData.R $2
+
+/usr/local/bin/MSD.py ${2}_tracking_noHeader.txt ${PLANES} ${N_TRACKS} $2 $4
 
 Rscript /usr/local/bin/MSD.R $2 $3
-
-#rm tracking_noHeader.txt
 
 
 

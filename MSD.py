@@ -7,11 +7,21 @@ import math
 planes = int(sys.argv[2])
 n_tracks = int(sys.argv[3])
 prefix = sys.argv[4].replace(' ', '')
+bead = ""
+if len(sys.argv) >= 6:
+    bead = sys.argv[5]
+else:
+    print("No bead tracking file supplied")
 
 #x coordinates vector
 x_coord = [[] for i in range(n_tracks)]
 #y coordinates vector
 y_coord = [[] for i in range(n_tracks)]
+
+#x coordinates vector
+bead_dx = []
+#y coordinates vector
+bead_dy = []
 
 #registers corresponding bin for trajectory i
 track_bin = [0 for i in range(n_tracks)]
@@ -36,6 +46,31 @@ for i in range(n_tracks):
 	track_length[i] = len(x_coord[i])
 
 max_frame = max(track_length)
+
+if bead:
+### read bead tracking file
+	with open(sys.argv[5]) as f:
+		for _ in range(3):
+			next(f)
+		line = str.split(next(f))
+		# get coordinates of bead at time zero
+		bead_x_coord = float(line[2])
+		bead_y_coord = float(line[3])
+		# first displacement is null
+		bead_dx.append(0)
+		bead_dy.append(0)
+		for line in f:
+			line = str.split(line)
+			bead_dx.append(float(line[2]) - bead_x_coord)
+			bead_dy.append(float(line[3]) - bead_y_coord)
+			bead_x_coord = float(line[2])
+			bead_y_coord = float(line[3])
+	
+	filename = prefix + "_correction.txt"
+	with open(filename, 'w') as o:
+		o.write("TIME" + "\t" + "XSHIFT" + "\t" + "YSHIFT" + "\n")
+		for tau in range(max_frame):
+			o.write(str(tau) + "\t" + str(bead_dx[tau]) + "\t" + str(bead_dy[tau]) + "\n")
 
 ### Ensemble-averaged MSD
 
@@ -63,6 +98,9 @@ for tau in range(max_frame):
 
 			xd = x_coord[track][tau]-x_coord[track][0]
 			yd = y_coord[track][tau]-y_coord[track][0]
+			if bead:
+				xd = xd - bead_dx[tau]
+				yd = yd - bead_dy[tau]
 			fd = math.sqrt((xd**2)+(yd**2))
 
 			MSD_single[track][tau] = (fd**2)
