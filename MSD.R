@@ -25,7 +25,9 @@ single = ggplot(msd_single, aes(x=as.numeric(factor(TAU))*frame_int,y=MSD,color=
 single$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
 ggsave(paste(prefix,"_MSD_single_trajectories.png",sep=""), plot=single, width = 11, height = 8.5, dpi=300)
 
-bins = ggplot(msd_bin) + geom_line(aes(x=TAU*frame_int,y=MSD,group=factor(BIN),color=BIN),size=1.1) + theme_bw(base_size=12) + labs(x="Time (s)",y="MSD") + scale_color_viridis(guide=guide_legend(title="Bin",title.theme = element_text(size = 8,face = "bold",colour = "black",angle = 0),label.theme = element_text(size = 8,colour = "black",angle = 0),keywidth = 0.1, keyheight = 0.1,default.unit="inch",override.aes = list(alpha = 1),byrow = TRUE),labels=c("2","4","6","8","10"),breaks=c(2,4,6,8,10)) + ggtitle("Ensemble averaged MSD - Binned by intensity")
+bins = ggplot(msd_bin) + geom_point(aes(x=TAU*frame_int,y=MSD,group=factor(BIN),color=BIN),size=2) + theme_bw(base_size=12) + labs(x="Time (s)",y="MSD (um²)")
+bins = bins + scale_color_viridis(guide=guide_legend(title="Bin",title.theme = element_text(size = 8,face = "bold",colour = "black",angle = 0),label.theme = element_text(size = 8,colour = "black",angle = 0),keywidth = 0.1, keyheight = 0.1,default.unit="inch",override.aes = list(alpha = 1),byrow = TRUE),labels=c("2","4","6","8","10"),breaks=c(2,4,6,8,10),option='D',direction=-1)
+bins = bins + ggtitle("Ensemble averaged MSD - Binned by mean intensity") + xlim(0,100) + scale_y_log10() + scale_x_log10()
 bins$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
 ggsave(paste(prefix,"_MSD_bins.png",sep=""), plot=bins, width = 11, height = 8.5, dpi=300)
 
@@ -33,10 +35,10 @@ ens = ggplot(msd) + geom_line(aes(x=TAU*frame_int,y=MSD)) + theme_bw(base_size=1
 ens$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
 ggsave(paste(prefix,"_MSD_ensemble_average.png",sep=""), plot=ens, width = 11, height = 8.5, dpi=300)
 
-time_ens = ggplot(msd_tau, aes(x=TAU*frame_int,y=VALUE)) + geom_line() + theme_bw(base_size = 12) + scale_color_discrete(guide=FALSE) + labs(x="Time (s)",y="MSD tau") + ggtitle("MSD tau (Time-ensemble average)")
+time_ens = ggplot(msd_tau, aes(x=TAU*frame_int,y=VALUE)) + geom_line() + theme_bw(base_size = 12) + scale_color_discrete(guide=FALSE) + labs(x="Time (s)",y="MSD tau (um²)") + ggtitle("MSD tau (Time-ensemble average)")
 ggsave(paste(prefix,"_MSD_time-ensemble_average.png",sep=""), plot=time_ens, width = 11, height = 8.5, dpi=300)
 
-both = ggplot(both_MSD) + geom_line(aes(x=TAU*frame_int,y=value,group=variable,color=variable),size=0.7) + theme_bw(base_size = 12) + labs(x="Time (s)",y="MSD") + scale_colour_manual(values=c("firebrick1","dodgerblue"),labels=c("Time", "Ensemble"))
+both = ggplot(both_MSD) + geom_line(aes(x=TAU*frame_int,y=value,group=variable,color=variable),size=0.7) + theme_bw(base_size = 12) + labs(x="Time (s)",y="MSD (um²)") + scale_colour_manual(values=c("firebrick1","dodgerblue"),labels=c("Time", "Ensemble"))
 both$theme$plot.margin = unit(c(0.5,1,0.5,0.5),"cm")
 ggsave(paste(prefix,"_MSD_both.png",sep=""), plot=both, width = 11, height = 8.5, dpi=300)
 
